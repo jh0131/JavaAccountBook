@@ -46,7 +46,7 @@ public class AccountBookFileManager {
         return transaction.getType().name()
                 + SEPARATOR + transaction.getDate()
                 + SEPARATOR + transaction.getAmount()
-                + SEPARATOR + escape(transaction.getCategory())
+                + SEPARATOR + escape(transaction.getCategory().getCode())
                 + SEPARATOR + escape(transaction.getMemo());
     }
 
@@ -59,13 +59,13 @@ public class AccountBookFileManager {
         TransactionType type = TransactionType.valueOf(parts[0]);
         LocalDate date = LocalDate.parse(parts[1]);
         long amount = Long.parseLong(parts[2]);
-        String category = unescape(parts[3]);
+        String categoryText = unescape(parts[3]);
         String memo = unescape(parts[4]);
 
         if (type == TransactionType.INCOME) {
-            return new Income(date, amount, category, memo);
+            return new Income(date, amount, IncomeCategory.from(categoryText), memo);
         }
-        return new Expense(date, amount, category, memo);
+        return new Expense(date, amount, ExpenseCategory.from(categoryText), memo);
     }
 
     private String escape(String value) {

@@ -38,7 +38,7 @@ public class TransactionTableModel extends AbstractTableModel {
             case 1:
                 return transaction.getType().getDisplayName();
             case 2:
-                return transaction.getCategory();
+                return transaction.getCategory().getDisplayName();
             case 3:
                 return numberFormat.format(transaction.getAmount()) + "원";
             case 4:

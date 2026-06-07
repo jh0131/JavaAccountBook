@@ -33,9 +33,6 @@ import java.util.Locale;
 
 public class AccountBookFrame extends JFrame {
 
-    private static final String[] INCOME_CATEGORIES = {"월급", "용돈"};
-    private static final String[] EXPENSE_CATEGORIES = {"식비", "교통", "쇼핑", "구독", "기타"};
-
     private final AccountBook book = new AccountBook();
 
     private final AccountBookFileManager file = new AccountBookFileManager();
@@ -46,7 +43,7 @@ public class AccountBookFrame extends JFrame {
     private final JTextField amountField = new JTextField(10);
 
     private final JComboBox<TransactionType> typeBox = new JComboBox<>(TransactionType.values());
-    private final JComboBox<String> categoryBox = new JComboBox<>();
+    private final JComboBox<TransactionCategory> categoryBox = new JComboBox<>();
     private final JTextField memoField = new JTextField(18);
 
     private final JLabel incomeLabel = new JLabel();
@@ -237,19 +234,19 @@ public class AccountBookFrame extends JFrame {
         updateCategoryComboBox(categoryBox, type);
     }
 
-    private void updateCategoryComboBox(JComboBox<String> comboBox, TransactionType type) {
-        String[] categories = getCategories(type);
+    private void updateCategoryComboBox(JComboBox<TransactionCategory> comboBox, TransactionType type) {
+        TransactionCategory[] categories = getCategories(type);
         comboBox.removeAllItems();
-        for (String category : categories) {
+        for (TransactionCategory category : categories) {
             comboBox.addItem(category);
         }
     }
 
-    private String[] getCategories(TransactionType type) {
+    private TransactionCategory[] getCategories(TransactionType type) {
         if (type == TransactionType.INCOME) {
-            return INCOME_CATEGORIES;
+            return IncomeCategory.values();
         }
-        return EXPENSE_CATEGORIES;
+        return ExpenseCategory.values();
     }
 
     private JScrollPane createTablePanel() {
@@ -281,14 +278,14 @@ public class AccountBookFrame extends JFrame {
             LocalDate date = LocalDate.parse(dateField.getText().trim());
             long amount = parseAmount(amountField.getText().trim());
             TransactionType type = (TransactionType) typeBox.getSelectedItem();
-            String category = getRequiredText(categoryBox.getSelectedItem().toString(), "카테고리");
+            TransactionCategory category = getRequiredCategory(categoryBox.getSelectedItem());
             String memo = memoField.getText().trim();
 
             Transaction transaction;
             if (type == TransactionType.INCOME) {
-                transaction = new Income(date, amount, category, memo);
+                transaction = new Income(date, amount, (IncomeCategory) category, memo);
             } else {
-                transaction = new Expense(date, amount, category, memo);
+                transaction = new Expense(date, amount, (ExpenseCategory) category, memo);
             }
 
             book.addTransaction(transaction);
@@ -313,12 +310,11 @@ public class AccountBookFrame extends JFrame {
         return amount;
     }
 
-    private String getRequiredText(String text, String fieldName) {
-        String trimmed = text.trim();
-        if (trimmed.isEmpty()) {
-            throw new IllegalArgumentException(fieldName + "을 입력하세요.");
+    private TransactionCategory getRequiredCategory(Object selectedItem) {
+        if (!(selectedItem instanceof TransactionCategory)) {
+            throw new IllegalArgumentException("카테고리를 선택하세요.");
         }
-        return trimmed;
+        return (TransactionCategory) selectedItem;
     }
 
     private void deleteSelectedTransaction() {
@@ -347,7 +343,7 @@ public class AccountBookFrame extends JFrame {
 
         JTextField editDateField = new JTextField(transaction.getDate().toString(), 15);
         JComboBox<TransactionType> editTypeBox = new JComboBox<>(TransactionType.values());
-        JComboBox<String> editCategoryBox = new JComboBox<>();
+        JComboBox<TransactionCategory> editCategoryBox = new JComboBox<>();
         JTextField editAmountField = new JTextField(String.valueOf(transaction.getAmount()), 15);
         JTextField editMemoField = new JTextField(transaction.getMemo(), 15);
 
@@ -426,15 +422,15 @@ public class AccountBookFrame extends JFrame {
         try {
             LocalDate newDate = LocalDate.parse(editDateField.getText().trim());
             TransactionType newType = (TransactionType) editTypeBox.getSelectedItem();
-            String newCategory = getRequiredText(editCategoryBox.getSelectedItem().toString(), "카테고리");
+            TransactionCategory newCategory = getRequiredCategory(editCategoryBox.getSelectedItem());
             long newAmount = parseAmount(editAmountField.getText().trim());
             String newMemo = editMemoField.getText().trim();
 
             Transaction newTransaction;
             if (newType == TransactionType.INCOME) {
-                newTransaction = new Income(newDate, newAmount, newCategory, newMemo);
+                newTransaction = new Income(newDate, newAmount, (IncomeCategory) newCategory, newMemo);
             } else {
-                newTransaction = new Expense(newDate, newAmount, newCategory, newMemo);
+                newTransaction = new Expense(newDate, newAmount, (ExpenseCategory) newCategory, newMemo);
             }
 
             book.setTransaction(modelRow, newTransaction);
@@ -450,7 +446,7 @@ public class AccountBookFrame extends JFrame {
         }
     }
 
-    private void selectCategoryIfExists(JComboBox<String> comboBox, String category) {
+    private void selectCategoryIfExists(JComboBox<TransactionCategory> comboBox, TransactionCategory category) {
         for (int i = 0; i < comboBox.getItemCount(); i++) {
             if (comboBox.getItemAt(i).equals(category)) {
                 comboBox.setSelectedItem(category);

@@ -15,7 +15,10 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 
+    // AccountBookStyle 클래스는 화면 디자인/스타일을 담당하는 클래스
+
 public class AccountBookStyle {
+
     public static final Color APP_BACKGROUND = new Color(245, 246, 248);
     public static final Color PANEL_BACKGROUND = Color.WHITE;
     public static final Color SIDE_BAR = new Color(67, 83, 220);
