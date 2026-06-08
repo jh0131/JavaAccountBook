@@ -30,7 +30,9 @@ public class AccountBook {
         transactions.remove(index);
     }
 
-    // 거래 내역 수정하는 메서드
+    /* 거래 내역 수정하는 메서드 (데이터를 입력 받아서 기존의 INCOME 또는 EXPENSE 객체를 삭제하고, 입력 받은 데이터
+    즉, 새로운 transaction 객체를 다시 생성함 */
+    
     public void setTransaction(int index, Transaction transaction) {
 
         if (index < 0 || index >= transactions.size()) {
