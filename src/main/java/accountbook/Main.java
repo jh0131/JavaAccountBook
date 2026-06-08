@@ -1,5 +1,7 @@
 package accountbook;
 
+import accountbook.view.AccountBookFrame;
+
 import javax.swing.SwingUtilities;
 
 public class Main {

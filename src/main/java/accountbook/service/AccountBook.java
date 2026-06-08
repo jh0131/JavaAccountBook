@@ -1,4 +1,7 @@
-package accountbook;
+package accountbook.service;
+
+import accountbook.model.Transaction;
+import accountbook.model.TransactionType;
 
 import java.util.ArrayList;
 import java.util.Collections;

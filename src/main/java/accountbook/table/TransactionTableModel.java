@@ -1,8 +1,15 @@
-package accountbook;
+package accountbook.table;
+
+import accountbook.model.Transaction;
+import accountbook.service.AccountBook;
 
 import javax.swing.table.AbstractTableModel;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+
+/*      AccountBook에 있는 거래 목록 데이터를 Swing의 JTable이 표시할 수 있는 형태로 바꿔주는 역할
+        거래 객체에 들어있는 참조값을 토대로 데이터를 확인해서 화면에 데이터를 띄워주는 역할      */
 
 public class TransactionTableModel extends AbstractTableModel {
 

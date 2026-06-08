@@ -19,7 +19,7 @@ JTable 갱신
 ↓
 총수입, 총지출, 잔액 다시 계산
 
-저장 버튼을 누르면 현재 거래 목록이 `accountbook-data.txt` 파일에 저장됩니다.  
+저장 버튼을 누르면 현재 거래 목록이 accountbook-data.txt 파일에 저장됩니다.  
 프로그램을 다시 실행하면 저장 파일을 자동으로 읽어와 거래 목록을 복원합니다.
 
 ## 클래스 역할
@@ -65,7 +65,7 @@ AccountBookFileManager
 
 ## 핵심 데이터 구조
 
-거래 1건의 공통 정보는 `Transaction` 클래스가 가지고 있습니다.
+거래 1건의 공통 정보는 Transaction 클래스가 가지고 있습니다.
 
 
 private LocalDate date;
@@ -73,8 +73,7 @@ private long amount;
 private TransactionCategory category;
 private String memo;
 
-
-`Transaction`은 추상 클래스이고, 실제 객체는 `Income` 또는 `Expense`로 생성됩니다.
+Transaction은 추상 클래스이고, 실제 객체는 Income 또는 Expense로 생성됩니다.
 
 public abstract TransactionType getType();
 
@@ -85,7 +84,6 @@ Expense는 getType()에서 TransactionType.EXPENSE를 반환합니다.
 ## 카테고리 enum
 
 수입과 지출은 사용할 수 있는 카테고리가 다르기 때문에 enum을 따로 만들었습니다.
-
 
 IncomeCategory
 → 월급, 용돈
@@ -199,3 +197,67 @@ EXPENSE	2026-06-02	12000	FOOD	점심
 
 불러올 때는 첫 번째 값이 INCOME이면 Income 객체를 만들고,  
 EXPENSE이면 Expense 객체를 만듭니다.
+
+## 발표 내용
+
+이 프로젝트는 단순히 Swing 화면만 만든 것이 아니라, 역할별로 클래스를 나누어 Java 객체지향 개념을 적용한 가계부 프로그램입니다.
+
+Main은 프로그램 실행 시작점이고, AccountBookFrame은 화면 구성과 버튼 이벤트 처리를 담당합니다.  
+AccountBook은 거래 추가, 삭제, 수정, 합계 계산 같은 핵심 로직을 담당하고,  
+TransactionTableModel은 AccountBook에 저장된 거래 객체들을 JTable 화면에 표시할 수 있도록 행과 열 형태로 변환합니다.  
+AccountBookFileManager는 거래 내역을 텍스트 파일로 저장하고 다시 불러오는 파일 입출력 역할을 담당합니다.
+
+즉, 화면, 데이터, 계산 로직, 파일 저장 기능을 각각 분리해서 관리하는 구조입니다.  
+이렇게 역할을 나누면 코드가 한 클래스에 몰리지 않고, 나중에 수정하거나 기능을 추가하기 쉬워집니다.
+
+## 직접 개선한 부분
+
+기존에는 카테고리를 단순 문자열처럼 처리할 수 있었지만, 객체지향과 타입 안전성을 살리기 위해 카테고리를 enum 타입으로 선언했습니다.
+
+IncomeCategory는 수입 카테고리를 담당하고, ExpenseCategory는 지출 카테고리를 담당합니다.  
+enum을 사용하면 정해진 카테고리 값만 사용할 수 있기 때문에 오타나 잘못된 값이 들어가는 문제를 줄일 수 있습니다.  
+예를 들어 "식비", "food", "FOOD" 같은 문자열이 섞이는 대신 ExpenseCategory.FOOD처럼 정해진 값으로 관리할 수 있습니다.
+
+또한 IncomeCategory와 ExpenseCategory가 공통으로 가져야 하는 기능은 TransactionCategory 인터페이스로 분리했습니다.
+
+public interface TransactionCategory {
+    TransactionType getType();
+    String getDisplayName();
+    String getCode();
+}
+
+이 인터페이스를 통해 수입 카테고리와 지출 카테고리를 각각 따로 만들면서도, 프로그램 내부에서는 TransactionCategory라는 공통 타입으로 다룰 수 있습니다.  
+이 부분은 객체지향의 추상화와 다형성을 활용한 부분입니다.
+
+그리고 파일의 역할을 더 명확하게 구분하기 위해 패키지 구조를 나누었습니다.
+
+accountbook.model
+→ Transaction, Income, Expense, Category enum 등 데이터 모델 담당
+
+accountbook.service
+→ AccountBook처럼 핵심 기능과 계산 로직 담당
+
+accountbook.view
+→ AccountBookFrame, AccountBookStyle처럼 화면 구성과 스타일 담당
+
+accountbook.table
+→ TransactionTableModel처럼 JTable 표시 방식 담당
+
+accountbook.file
+→ AccountBookFileManager처럼 파일 저장과 불러오기 담당
+
+이렇게 패키지를 분리하면 각 클래스가 어떤 역할을 하는지 더 쉽게 파악할 수 있고, 유지보수하기도 좋아집니다.
+
+마지막으로 Transaction 클래스에서는 필드를 private로 선언하고, 외부에서는 public getter/setter 메서드를 통해 접근하도록 만들었습니다.
+
+private LocalDate date;
+private long amount;
+private TransactionCategory category;
+private String memo;
+
+이 방식은 객체 내부 데이터를 직접 접근하지 못하게 막고, 필요한 메서드를 통해서만 값을 읽거나 수정하게 하는 캡슐화입니다.  
+캡슐화를 사용하면 객체의 데이터를 더 안전하게 관리할 수 있고, 클래스 내부 구현이 바뀌어도 외부 코드에 주는 영향을 줄일 수 있습니다.
+
+발표에서는 이 부분을 다음과 같이 정리할 수 있습니다.
+
+"제가 수정한 부분은 객체지향 구조를 더 살리는 방향이었습니다. 카테고리는 enum으로 만들어 타입 안전성을 높였고, 공통 기능은 TransactionCategory 인터페이스로 추상화했습니다. 또한 model, service, view, table, file 패키지로 역할을 분리해서 코드 구조를 명확하게 만들었습니다. Transaction 클래스에서는 필드를 private로 두고 public 메서드로 접근하게 해서 캡슐화를 적용했습니다."

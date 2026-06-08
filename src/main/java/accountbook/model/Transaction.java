@@ -1,4 +1,4 @@
-package accountbook;
+package accountbook.model;
 
 import java.time.LocalDate;
 
@@ -66,4 +66,3 @@ public abstract class Transaction {
         return -amount;
     }
 }
-

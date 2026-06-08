@@ -1,4 +1,15 @@
-package accountbook;
+package accountbook.view;
+
+import accountbook.file.AccountBookFileManager;
+import accountbook.model.Expense;
+import accountbook.model.ExpenseCategory;
+import accountbook.model.Income;
+import accountbook.model.IncomeCategory;
+import accountbook.model.Transaction;
+import accountbook.model.TransactionCategory;
+import accountbook.model.TransactionType;
+import accountbook.service.AccountBook;
+import accountbook.table.TransactionTableModel;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -29,7 +40,8 @@ import java.time.format.DateTimeParseException;
 import java.util.Locale;
 
 
-// Swing을 이용한 프론트 엔드 화면 구성 부분.
+/*   Swing을 이용한 프론트 엔드 화면 구성 부분.
+   레이아웃,버튼,이벤트,다른 클래스와 연결, 입력 값 처리   */
 
 public class AccountBookFrame extends JFrame {
 
@@ -464,6 +476,7 @@ public class AccountBookFrame extends JFrame {
         }
     }
 
+    // 프로그램을 시작하면 자동으로 불러오기 실행 (AccountBookFrame 생성자에서 호출)
     private void loadInitialData() {
         if (saveFile.toFile().exists()) {
             loadData();

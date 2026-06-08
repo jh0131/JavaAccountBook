@@ -1,4 +1,4 @@
-package accountbook;
+package accountbook.view;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;

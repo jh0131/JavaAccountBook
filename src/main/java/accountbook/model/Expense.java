@@ -1,4 +1,4 @@
-package accountbook;
+package accountbook.model;
 
 import java.time.LocalDate;
 

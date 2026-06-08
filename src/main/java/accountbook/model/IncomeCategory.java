@@ -1,4 +1,6 @@
-package accountbook;
+package accountbook.model;
+
+// 타입 안전성을 위해 카테고리 enum 선언
 
 public enum IncomeCategory implements TransactionCategory {
 
